@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/answer.dart';
-import 'package:flutter_complete_guide/question.dart';
+import 'package:flutter_complete_guide/result.dart';
+import 'quiz.dart';
 
 // void main(){
 //   runApp(MyApp());
@@ -22,26 +22,38 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp>{
 
   var _questionIndex = 0;
+  var _totalScore = 0;
 
-  void _answerQuestion(){
-    if(_questionIndex<1) {
+  void _answerQuestion(int score){
       _questionIndex += 1;
-    } else {
-      _questionIndex = 0;
-    }
+      setState(() {});
+
+      _totalScore += score;
     //print(questionIndex);
+
+  }
+
+  void _resetQuiz(){
+    _questionIndex = 0;
+    _totalScore = 0;
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context){
 
-    var questions = [
+    var _questions = [
       {'questionText':'what\'s your favourite color?',
-        'answers' : ['Red','Blue','Green'],
+        'answers' : [
+          {'text' : 'Red' ,'score' : 5},
+          {'text' : 'Blue' ,'score' : 10},
+          {'text' : 'Green' ,'score' : 8}],
       },
       {'questionText': 'what\'s your favourite animal?',
-        'answers' : ['Panda','Monkey','Cheetah'],
+        'answers' : [
+          {'text' : 'Panda' ,'score' : 5},
+          {'text' : 'Monkey' ,'score' : 10},
+          {'text' : 'Cheetah' ,'score' : 8}],
       },
     ];
 
@@ -50,16 +62,12 @@ class _MyAppState extends State<MyApp>{
        appBar: AppBar(
          centerTitle: true,
          title: const Text('My First App'),),
-        body: Column(
-          children: [
-            Question(
-                questions[_questionIndex]['questionText'] as String,
-            ),
-            ...(questions[_questionIndex]['answers'] as List<String>).map((answer){
-              return Answer(ans: answer , selectHandler: _answerQuestion);
-            }).toList(),
-          ],
-        )
+        body: _questionIndex < _questions.length ?
+        Quiz(answerQuestion: _answerQuestion,
+            questions: _questions,
+            questionIndex: _questionIndex)
+            :
+            Result(totalScore: _totalScore, resetQuiz: _resetQuiz,)
       ),
     );
   }
